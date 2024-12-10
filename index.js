@@ -95,7 +95,7 @@ function cadastrar(req, res){
             </div>
             <div class="form-group">
                 <label for="exampleInputName2">Data de Nascimento</label>
-                <input type="text" class="form-control" id="exampleInputDate1" placeholder="28/06/2004" name="data">
+                <input type="date" class="form-control" id="exampleInputDate1" placeholder="28/06/2004" name="data">
             </div>
             <div class="form-group">
                 <label for="exampleInputName3">Nickname/Apelido</label>
@@ -164,13 +164,6 @@ function verificarAutent(req, resp, next){
 }
 
 /*-- ROTAS --*/
-app.post('/cadastrar', (req, res) => {
-    const nome = req.body.nome;
-    const data = req.body.data;
-    const apelido = req.body.apelido;
-
-    res.send(`<h1>Cadastrado!</h1>`);
-});
 
 app.post('/login', autenticarUsuario);
 app.get('/', verificarAutent, menu);
