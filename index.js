@@ -1,16 +1,19 @@
 import express from "express";
 import session from "express-session";
+import cookieParser from "cookie-parser";
 
 const app = express();
 
 app.use(session({
-    secret: '',
+    secret: 'S3cr3t',
     resave: false,
     saveUninitialized: true,
     cookie: {
         maxAge: 1000 * 60 * 30
     }
-}))
+}));
+
+app.use(cookieParser());
 
 app.use(express.urlencoded({ extended: true}))
 
@@ -25,6 +28,55 @@ function inicio(req, res){
 }
 
 /*-- MENU --*/
+function menu(req, res){
+    res.send(`<html>
+                <head>
+                    <title>Login</title>
+                    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+                </head>
+                <body>
+                <!-- Navbar -->
+                <nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary">
+                <!-- Container wrapper -->
+                <div class="container-fluid">
+                    <!-- Toggle button -->
+                    <button
+                    data-mdb-collapse-init
+                    class="navbar-toggler"
+                    type="button"
+                    data-mdb-target="#navbarSupportedContent"
+                    aria-controls="navbarSupportedContent"
+                    aria-expanded="false"
+                    aria-label="Toggle navigation"
+                    >
+                    <i class="fas fa-bars"></i>
+                    </button>
+
+                    <!-- Collapsible wrapper -->
+                    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <!-- Navbar brand -->
+                    <h1>Trabalho Final</h1>
+                    <!-- Left links -->
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                        <a class="nav-link" href="/cadastrar">Cadastrar Usuarios</a>
+                        </li>
+                        <li class="nav-item">
+                        <a class="nav-link" href="#">Bate-Papo</a>
+                        </li>
+                    </ul>
+                    <!-- Left links -->
+                    </div>
+                    <!-- Collapsible wrapper -->
+
+                <!-- Container wrapper -->
+                </nav>
+                <!-- Navbar -->
+                </body>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+              </html>
+      `)
+}
 
 /*-- BATE-PAPO --*/
 
@@ -58,15 +110,25 @@ function cadastrar(req, res){
       </html>`);
 }
 
+/*-- CADASTRAR USUARIO --*/
+function cadastrarUsuario(req, resp){
+    const nome = req.body.nome;
+    const data = req.body.data;
+    const apelido = req.body.apelido;
+
+    
+}
+
 /*-- AUTENTICAR --*/
 
 function autenticarUsuario(req, resp){
     const usuario = req.body.usuario;
     const senha = req.body.senha;
 
-    if(usuario === '' && senha === ''){
+    if(usuario === 'usuario' && senha === '10'){
         req.session.usuarioLogado = true;
-        resp.redirect('/menu')
+        resp.cookie('dataHoraUltimoLogin', new Date().toLocaleString(), {maxAge: 1000 * 60 * 60 * 24 * 30, httpOnly: true});
+        resp.redirect('/')
     }
     else{
         resp.send(`
@@ -112,8 +174,8 @@ app.post('/cadastrar', (req, res) => {
 });
 
 app.post('/login', autenticarUsuario);
-app.get('/', inicio);
-app.get('/cadastrar', verificarAutent cadastrar);
+app.get('/', verificarAutent, menu);
+app.get('/cadastrar', verificarAutent, cadastrar);
 
 app.listen(porta, host, () => {
     console.log(`Está no ar, Endereço: http://${host}:${porta}`);
