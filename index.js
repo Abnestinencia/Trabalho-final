@@ -1,4 +1,5 @@
 import express from "express";
+import path from "path";
 import session from "express-session";
 import cookieParser from "cookie-parser";
 
@@ -9,6 +10,8 @@ app.use(session({
     resave: false,
     saveUninitialized: true,
     cookie: {
+        secure: false,
+        httpOnly: true,
         maxAge: 1000 * 60 * 30
     }
 }));
@@ -17,15 +20,11 @@ app.use(cookieParser());
 
 app.use(express.urlencoded({ extended: true}))
 
-app.use(express.static('./paginas/public'))
+app.use(express.static(path.join(process.cwd(), 'paginas/public')));
 
 const porta = 7000;
-const host = "0.0.0.0";
+const host = "localhost";
 
-/*-- INICIO --*/
-function inicio(req, res){
-        resp.redirect('/login.html');
-}
 
 /*-- MENU --*/
 function menu(req, res){
@@ -116,7 +115,7 @@ function cadastrarUsuario(req, resp){
     const data = req.body.data;
     const apelido = req.body.apelido;
 
-    
+
 }
 
 /*-- AUTENTICAR --*/
